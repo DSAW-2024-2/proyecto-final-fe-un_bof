@@ -1,0 +1,12 @@
+{
+  "name": "proyecto-final-fe-un_bof",
+  "version": "1.0.0",
+  "description": "Nombres: Andrés Mauricio Ricaurte y David Santiago Medina Link al front end: https://drive2u.vercel.app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

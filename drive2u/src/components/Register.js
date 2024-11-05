@@ -6,46 +6,84 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function Register() {
   const [formData, setFormData] = useState({
+    userType: '', // 'passenger' o 'driver'
     name: '',
     surName: '',
     universityID: '',
     email: '',
     phoneNumber: '',
     password: '',
-    // Eliminamos 'photo' ya que no estamos manejando archivos
+    userPhoto: null, // Archivo de foto del usuario
+    // Campos adicionales para conductor
+    licensePlate: '',
+    vehiclePhoto: null, // Archivo de foto del vehículo
+    capacity: '',
+    soatPhoto: null, // Archivo de foto del SOAT
+    brand: '',
+    model: '',
   });
+  const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
+    const { name, value, type } = e.target;
+
+    if (type === 'file') {
+      setFormData({
+        ...formData,
+        [name]: e.target.files[0],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleUserTypeSelect = (type) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      userType: type,
     });
+  };
+
+  const nextStep = () => {
+    setCurrentStep((prev) => prev + 1);
+  };
+
+  const prevStep = () => {
+    setCurrentStep((prev) => prev - 1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Construimos el objeto de datos para enviar en JSON
-    const data = {
-      email: formData.email,
-      password: formData.password,
-      name: formData.name,
-      surName: formData.surName,
-      universityID: formData.universityID,
-      phoneNumber: formData.phoneNumber,
-    };
+    // Construimos el objeto FormData para enviar archivos
+    const data = new FormData();
+    data.append('userType', formData.userType);
+    data.append('name', formData.name);
+    data.append('surName', formData.surName);
+    data.append('universityID', formData.universityID);
+    data.append('email', formData.email);
+    data.append('phoneNumber', formData.phoneNumber);
+    data.append('password', formData.password);
+    data.append('userPhoto', formData.userPhoto);
+
+    if (formData.userType === 'driver') {
+      data.append('licensePlate', formData.licensePlate);
+      data.append('vehiclePhoto', formData.vehiclePhoto);
+      data.append('capacity', formData.capacity);
+      data.append('soatPhoto', formData.soatPhoto);
+      data.append('brand', formData.brand);
+      data.append('model', formData.model);
+    }
 
     try {
       const response = await axios.post(
         'https://proyecto-final-be-un-bof-1.vercel.app/register',
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        data
       );
       const { token } = response.data;
       localStorage.setItem('token', token);
@@ -67,106 +105,348 @@ function Register() {
     }
   };
 
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        // Paso 1: Seleccionar tipo de usuario con imágenes
+        return (
+          <div className="mb-6">
+            <h3 className="mb-4 text-xl font-semibold text-gray-800">
+              Selecciona tu tipo de usuario
+            </h3>
+            <div className="flex justify-center space-x-6">
+              <div
+                onClick={() => handleUserTypeSelect('passenger')}
+                className={`cursor-pointer p-4 border-2 rounded-lg ${
+                  formData.userType === 'passenger'
+                    ? 'border-green-600'
+                    : 'border-gray-300'
+                }`}
+              >
+                <img
+                  src="drive2u/src/images/passenger.png"
+                  alt="Pasajero"
+                  className="w-24 h-24 mx-auto"
+                />
+                <p className="mt-2 text-center font-semibold text-gray-700">
+                  Pasajero
+                </p>
+              </div>
+              <div
+                onClick={() => handleUserTypeSelect('driver')}
+                className={`cursor-pointer p-4 border-2 rounded-lg ${
+                  formData.userType === 'driver'
+                    ? 'border-green-600'
+                    : 'border-gray-300'
+                }`}
+              >
+                <img
+                  src="drive2u/src/images/driver.png"
+                  alt="Conductor"
+                  className="w-24 h-24 mx-auto"
+                />
+                <p className="mt-2 text-center font-semibold text-gray-700">
+                  Conductor
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={nextStep}
+              className="px-6 py-2 mt-6 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+              disabled={!formData.userType}
+            >
+              Siguiente
+            </button>
+          </div>
+        );
+      case 2:
+        // Paso 2: Datos básicos
+        return (
+          <div>
+            <h3 className="mb-4 text-xl font-semibold text-gray-800">
+              Información Personal
+            </h3>
+            <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2">
+              <div>
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Tu nombre"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  name="surName"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.surName}
+                  onChange={handleChange}
+                  placeholder="Tu apellido"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2">
+              <div>
+                <label className="block mb-2 font-semibold text-gray-700">
+                  ID Universitario
+                </label>
+                <input
+                  type="text"
+                  name="universityID"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.universityID}
+                  onChange={handleChange}
+                  placeholder="12345678"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Número de Teléfono
+                </label>
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  placeholder="+1 234 567 8901"
+                  required
+                />
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2 font-semibold text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="tuemail@ejemplo.com"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2 font-semibold text-gray-700">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                name="password"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="********"
+                required
+                minLength={8}
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block mb-2 font-semibold text-gray-700">
+                Foto
+              </label>
+              <input
+                type="file"
+                name="userPhoto"
+                accept="image/*"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={prevStep}
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+              >
+                Atrás
+              </button>
+              <button
+                type="button"
+                onClick={nextStep}
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        );
+      case 3:
+        // Paso 3: Datos del conductor (si aplica)
+        if (formData.userType === 'driver') {
+          return (
+            <div>
+              <h3 className="mb-4 text-xl font-semibold text-gray-800">
+                Información del Vehículo
+              </h3>
+              <div className="mb-4">
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Placa del Vehículo
+                </label>
+                <input
+                  type="text"
+                  name="licensePlate"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.licensePlate}
+                  onChange={handleChange}
+                  placeholder="ABC123"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Foto del Vehículo
+                </label>
+                <input
+                  type="file"
+                  name="vehiclePhoto"
+                  accept="image/*"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Capacidad del Vehículo
+                </label>
+                <input
+                  type="number"
+                  name="capacity"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.capacity}
+                  onChange={handleChange}
+                  placeholder="4"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Foto del SOAT
+                </label>
+                <input
+                  type="file"
+                  name="soatPhoto"
+                  accept="image/*"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2">
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Marca
+                  </label>
+                  <input
+                    type="text"
+                    name="brand"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={formData.brand}
+                    onChange={handleChange}
+                    placeholder="Toyota"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-700">
+                    Modelo
+                  </label>
+                  <input
+                    type="text"
+                    name="model"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={formData.model}
+                    onChange={handleChange}
+                    placeholder="Corolla"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                >
+                  Atrás
+                </button>
+                <button
+                  type="button"
+                  onClick={nextStep}
+                  className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          );
+        } else {
+          // Si es pasajero, saltamos al paso final
+          nextStep();
+          return null;
+        }
+      case 4:
+        // Paso 4: Confirmación y envío
+        return (
+          <div>
+            <h3 className="mb-4 text-xl font-semibold text-gray-800">
+              Revisa tu información
+            </h3>
+            {/* Puedes agregar aquí un resumen de la información ingresada */}
+            <p className="mb-6">
+              Por favor, confirma que todos tus datos son correctos antes de
+              enviar.
+            </p>
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={prevStep}
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+              >
+                Atrás
+              </button>
+              <button
+                type="submit"
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+                disabled={loading}
+              >
+                {loading ? 'Enviando...' : 'Registrarse'}
+              </button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
       <div className="w-full max-w-xl p-8 bg-white rounded-lg shadow-2xl">
         <div className="flex justify-center mb-6">
           {/* Puedes agregar un logo aquí si lo deseas */}
         </div>
-        <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">Crear Cuenta</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Eliminamos 'encType' ya que no es necesario */}
-          <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2">
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Nombre</label>
-              <input
-                type="text"
-                name="name"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Tu nombre"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Apellido</label>
-              <input
-                type="text"
-                name="surName"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                value={formData.surName}
-                onChange={handleChange}
-                placeholder="Tu apellido"
-                required
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2">
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">ID Universitario</label>
-              <input
-                type="text"
-                name="universityID"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                value={formData.universityID}
-                onChange={handleChange}
-                placeholder="12345678"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Número de Teléfono</label>
-              <input
-                type="tel"
-                name="phoneNumber"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                placeholder="+1 234 567 8901"
-                required
-              />
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2 font-semibold text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="tuemail@ejemplo.com"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2 font-semibold text-gray-700">Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="********"
-              required
-              minLength={8}
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-3 mb-4 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-            disabled={loading}
-          >
-            {loading ? 'Cargando...' : 'Registrarse'}
-          </button>
-          <p className="text-center text-gray-600">
-            ¿Ya tienes una cuenta?{' '}
-            <Link to="/" className="font-semibold text-blue-700 hover:underline">
-              Inicia sesión aquí
-            </Link>
-          </p>
-        </form>
+        <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
+          Crear Cuenta
+        </h2>
+        <form onSubmit={handleSubmit}>{renderStep()}</form>
       </div>
       <ToastContainer />
     </div>
