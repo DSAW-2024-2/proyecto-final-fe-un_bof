@@ -1,10 +1,13 @@
+// src/components/Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Importar useNavigate
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
+  const navigate = useNavigate(); // Hook para navegación programática
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,7 +17,7 @@ function Login() {
     setLoading(true);
     try {
       const response = await axios.post(
-        'https://proyecto-final-be-un-bof-1.vercel.app/login',
+        'https://proyecto-final-be-un-bof.vercel.app/login',
         { email, password },
         {
           headers: {
@@ -26,7 +29,7 @@ function Login() {
       localStorage.setItem('token', token);
       toast.success('Inicio de sesión exitoso');
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        navigate('/dashboard'); // Navega a /dashboard
       }, 1500);
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
@@ -43,11 +46,16 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: 'url(https://images2.alphacoders.com/546/thumb-1920-546678.jpg)',
+      }}
+    >
       <div className="absolute top-4 right-4">
         {/* Puedes agregar aquí un botón para cambiar entre modo oscuro y claro */}
       </div>
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-2xl">
+      <div className="w-full max-w-md p-8 bg-white bg-opacity-90 rounded-lg shadow-2xl">
         <div className="flex justify-center mb-6">
           {/* Puedes agregar un logo aquí si lo deseas */}
         </div>

@@ -1,10 +1,13 @@
+// src/components/Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Importar Link y useNavigate
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Register() {
+  const navigate = useNavigate(); // Hook para navegación programática
+
   const [formData, setFormData] = useState({
     userType: '', // 'passenger' o 'driver'
     name: '',
@@ -82,14 +85,14 @@ function Register() {
 
     try {
       const response = await axios.post(
-        'https://proyecto-final-be-un-bof-1.vercel.app/register',
+        'https://proyecto-final-be-un-bof.vercel.app/register',
         data
       );
       const { token } = response.data;
       localStorage.setItem('token', token);
       toast.success('Registro exitoso');
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        navigate('/dashboard'); // Navega a /dashboard
       }, 1500);
     } catch (error) {
       console.error('Error al registrarse:', error);
@@ -123,8 +126,9 @@ function Register() {
                     : 'border-gray-300'
                 }`}
               >
+                {/* Usar el enlace directo de pasajero */}
                 <img
-                  src="drive2u/src/images/passenger.png"
+                  src="https://cdn-icons-png.flaticon.com/512/1042/1042260.png"
                   alt="Pasajero"
                   className="w-24 h-24 mx-auto"
                 />
@@ -140,8 +144,9 @@ function Register() {
                     : 'border-gray-300'
                 }`}
               >
+                {/* Usar un enlace directo de conductor */}
                 <img
-                  src="drive2u/src/images/driver.png"
+                  src="https://cdn-icons-png.flaticon.com/512/2481/2481723.png" // Enlace de ejemplo, reemplázalo con el correcto si lo tienes
                   alt="Conductor"
                   className="w-24 h-24 mx-auto"
                 />
@@ -150,14 +155,23 @@ function Register() {
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={nextStep}
-              className="px-6 py-2 mt-6 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
-              disabled={!formData.userType}
-            >
-              Siguiente
-            </button>
+            <div className="flex justify-between mt-6">
+              <button
+                type="button"
+                onClick={() => navigate('/login')} // Navegar a /login
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+              >
+                Atrás
+              </button>
+              <button
+                type="button"
+                onClick={nextStep}
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+                disabled={!formData.userType}
+              >
+                Siguiente
+              </button>
+            </div>
           </div>
         );
       case 2:
@@ -409,11 +423,28 @@ function Register() {
             <h3 className="mb-4 text-xl font-semibold text-gray-800">
               Revisa tu información
             </h3>
-            {/* Puedes agregar aquí un resumen de la información ingresada */}
-            <p className="mb-6">
-              Por favor, confirma que todos tus datos son correctos antes de
-              enviar.
-            </p>
+            {/* Resumen de la información ingresada */}
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-700">Tipo de Usuario:</h4>
+              <p className="mb-4 capitalize">{formData.userType}</p>
+
+              <h4 className="font-semibold text-gray-700">Información Personal:</h4>
+              <p><strong>Nombre:</strong> {formData.name}</p>
+              <p><strong>Apellido:</strong> {formData.surName}</p>
+              <p><strong>ID Universitario:</strong> {formData.universityID}</p>
+              <p><strong>Teléfono:</strong> {formData.phoneNumber}</p>
+              <p><strong>Email:</strong> {formData.email}</p>
+
+              {formData.userType === 'driver' && (
+                <>
+                  <h4 className="font-semibold text-gray-700 mt-4">Información del Vehículo:</h4>
+                  <p><strong>Placa:</strong> {formData.licensePlate}</p>
+                  <p><strong>Capacidad:</strong> {formData.capacity}</p>
+                  <p><strong>Marca:</strong> {formData.brand}</p>
+                  <p><strong>Modelo:</strong> {formData.model}</p>
+                </>
+              )}
+            </div>
             <div className="flex justify-between">
               <button
                 type="button"
@@ -438,15 +469,29 @@ function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
-      <div className="w-full max-w-xl p-8 bg-white rounded-lg shadow-2xl">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: 'url(https://images2.alphacoders.com/546/thumb-1920-546678.jpg)',
+      }}
+    >
+      <div className="w-full max-w-xl p-8 bg-white bg-opacity-90 rounded-lg shadow-2xl relative">
         <div className="flex justify-center mb-6">
           {/* Puedes agregar un logo aquí si lo deseas */}
         </div>
         <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
           Crear Cuenta
         </h2>
-        <form onSubmit={handleSubmit}>{renderStep()}</form>
+        <form onSubmit={handleSubmit}>
+          {renderStep()}
+        </form>
+        {/* Texto para iniciar sesión */}
+        <p className="mt-6 text-center text-gray-600">
+          ¿Ya tienes una cuenta?{' '}
+          <Link to="/login" className="text-green-600 hover:underline">
+            Inicia sesión
+          </Link>
+        </p>
       </div>
       <ToastContainer />
     </div>
