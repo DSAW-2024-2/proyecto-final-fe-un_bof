@@ -4,10 +4,10 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; // Importar Link y useNavigate
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+ 
 function Register() {
   const navigate = useNavigate(); // Hook para navegación programática
-
+ 
   const [formData, setFormData] = useState({
     userType: '', // 'passenger' o 'driver'
     name: '',
@@ -27,10 +27,10 @@ function Register() {
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-
+ 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-
+ 
     if (type === 'file') {
       setFormData({
         ...formData,
@@ -43,26 +43,26 @@ function Register() {
       });
     }
   };
-
+ 
   const handleUserTypeSelect = (type) => {
     setFormData({
       ...formData,
       userType: type,
     });
   };
-
+ 
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
   };
-
+ 
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1);
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+ 
     // Construimos el objeto FormData para enviar archivos
     const data = new FormData();
     data.append('userType', formData.userType);
@@ -73,7 +73,7 @@ function Register() {
     data.append('phoneNumber', formData.phoneNumber);
     data.append('password', formData.password);
     data.append('userPhoto', formData.userPhoto);
-
+ 
     if (formData.userType === 'driver') {
       data.append('licensePlate', formData.licensePlate);
       data.append('vehiclePhoto', formData.vehiclePhoto);
@@ -82,7 +82,7 @@ function Register() {
       data.append('brand', formData.brand);
       data.append('model', formData.model);
     }
-
+ 
     try {
       const response = await axios.post(
         'https://proyecto-final-be-un-bof.vercel.app/register',
@@ -107,7 +107,7 @@ function Register() {
       setLoading(false);
     }
   };
-
+ 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -427,14 +427,14 @@ function Register() {
             <div className="mb-6">
               <h4 className="font-semibold text-gray-700">Tipo de Usuario:</h4>
               <p className="mb-4 capitalize">{formData.userType}</p>
-
+ 
               <h4 className="font-semibold text-gray-700">Información Personal:</h4>
               <p><strong>Nombre:</strong> {formData.name}</p>
               <p><strong>Apellido:</strong> {formData.surName}</p>
               <p><strong>ID Universitario:</strong> {formData.universityID}</p>
               <p><strong>Teléfono:</strong> {formData.phoneNumber}</p>
               <p><strong>Email:</strong> {formData.email}</p>
-
+ 
               {formData.userType === 'driver' && (
                 <>
                   <h4 className="font-semibold text-gray-700 mt-4">Información del Vehículo:</h4>
@@ -467,7 +467,7 @@ function Register() {
         return null;
     }
   };
-
+ 
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-cover bg-center"
@@ -497,5 +497,5 @@ function Register() {
     </div>
   );
 }
-
+ 
 export default Register;
