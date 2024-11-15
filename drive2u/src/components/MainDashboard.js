@@ -4,6 +4,7 @@ import DriverDashboard from './DriverDashboard';
 import PassengerDashboard from './PassengerDashboard';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Switch } from '@mui/material'; // Importa el componente Switch
 
 const MainDashboard = () => {
   const navigate = useNavigate();
@@ -27,12 +28,24 @@ const MainDashboard = () => {
             fontWeight: 'bolder',
             fontSize: '1.5rem'
           }}
-          >
-            Drive 2 U
+        >
+          Drive 2 U
         </h1>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <label style={{ marginRight: '10px' }}>{isDriver ? 'Conductor' : 'Pasajero'}</label>
-          <input type="checkbox" checked={isDriver} onChange={handleToggle} />
+          {/* Deslizador verde */}
+          <Switch
+            checked={isDriver}
+            onChange={handleToggle}
+            sx={{
+              '& .MuiSwitch-switchBase.Mui-checked': {
+                color: 'green',
+              },
+              '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                backgroundColor: 'green',
+              },
+            }}
+          />
           <button
             style={{
               backgroundColor: 'red',

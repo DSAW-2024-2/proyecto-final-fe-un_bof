@@ -4,10 +4,10 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; // Importar Link y useNavigate
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
- 
+
 function Register() {
   const navigate = useNavigate(); // Hook para navegación programática
- 
+
   const [formData, setFormData] = useState({
     userType: '', // 'passenger' o 'driver'
     name: '',
@@ -27,10 +27,10 @@ function Register() {
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
- 
+
   const handleChange = (e) => {
     const { name, value, type } = e.target;
- 
+
     if (type === 'file') {
       setFormData({
         ...formData,
@@ -43,26 +43,26 @@ function Register() {
       });
     }
   };
- 
+
   const handleUserTypeSelect = (type) => {
     setFormData({
       ...formData,
       userType: type,
     });
   };
- 
+
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
   };
- 
+
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1);
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
- 
+
     // Construimos el objeto FormData para enviar archivos
     const data = new FormData();
     data.append('userType', formData.userType);
@@ -73,7 +73,7 @@ function Register() {
     data.append('phoneNumber', formData.phoneNumber);
     data.append('password', formData.password);
     data.append('userPhoto', formData.userPhoto);
- 
+
     if (formData.userType === 'driver') {
       data.append('licensePlate', formData.licensePlate);
       data.append('vehiclePhoto', formData.vehiclePhoto);
@@ -82,7 +82,7 @@ function Register() {
       data.append('brand', formData.brand);
       data.append('model', formData.model);
     }
- 
+
     try {
       const response = await axios.post(
         'https://proyecto-final-be-un-bof.vercel.app/register',
@@ -107,24 +107,24 @@ function Register() {
       setLoading(false);
     }
   };
- 
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
         // Paso 1: Seleccionar tipo de usuario con imágenes
         return (
           <div className="mb-6">
-            <h3 className="mb-4 text-xl font-semibold text-gray-800">
+            <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
               Selecciona tu tipo de usuario
             </h3>
-            <div className="flex justify-center space-x-6">
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
               <div
                 onClick={() => handleUserTypeSelect('passenger')}
-                className={`cursor-pointer p-4 border-2 rounded-lg ${
+                className={`cursor-pointer p-4 border-2 rounded-lg flex-1 max-w-xs mx-auto sm:mx-0 ${
                   formData.userType === 'passenger'
                     ? 'border-green-600'
                     : 'border-gray-300'
-                }`}
+                } hover:border-green-500 transition-colors duration-200`}
               >
                 {/* Usar el enlace directo de pasajero */}
                 <img
@@ -138,11 +138,11 @@ function Register() {
               </div>
               <div
                 onClick={() => handleUserTypeSelect('driver')}
-                className={`cursor-pointer p-4 border-2 rounded-lg ${
+                className={`cursor-pointer p-4 border-2 rounded-lg flex-1 max-w-xs mx-auto sm:mx-0 ${
                   formData.userType === 'driver'
                     ? 'border-green-600'
                     : 'border-gray-300'
-                }`}
+                } hover:border-green-500 transition-colors duration-200`}
               >
                 {/* Usar un enlace directo de conductor */}
                 <img
@@ -159,14 +159,14 @@ function Register() {
               <button
                 type="button"
                 onClick={() => navigate('/login')} // Navegar a /login
-                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
               >
                 Atrás
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:bg-green-300"
                 disabled={!formData.userType}
               >
                 Siguiente
@@ -178,7 +178,7 @@ function Register() {
         // Paso 2: Datos básicos
         return (
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800">
+            <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
               Información Personal
             </h3>
             <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2">
@@ -287,14 +287,14 @@ function Register() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
               >
                 Atrás
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200"
               >
                 Siguiente
               </button>
@@ -306,7 +306,7 @@ function Register() {
         if (formData.userType === 'driver') {
           return (
             <div>
-              <h3 className="mb-4 text-xl font-semibold text-gray-800">
+              <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
                 Información del Vehículo
               </h3>
               <div className="mb-4">
@@ -397,14 +397,14 @@ function Register() {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
                 >
                   Atrás
                 </button>
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+                  className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200"
                 >
                   Siguiente
                 </button>
@@ -420,21 +420,21 @@ function Register() {
         // Paso 4: Confirmación y envío
         return (
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800">
+            <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
               Revisa tu información
             </h3>
             {/* Resumen de la información ingresada */}
             <div className="mb-6">
               <h4 className="font-semibold text-gray-700">Tipo de Usuario:</h4>
               <p className="mb-4 capitalize">{formData.userType}</p>
- 
+
               <h4 className="font-semibold text-gray-700">Información Personal:</h4>
               <p><strong>Nombre:</strong> {formData.name}</p>
               <p><strong>Apellido:</strong> {formData.surName}</p>
               <p><strong>ID Universitario:</strong> {formData.universityID}</p>
               <p><strong>Teléfono:</strong> {formData.phoneNumber}</p>
               <p><strong>Email:</strong> {formData.email}</p>
- 
+
               {formData.userType === 'driver' && (
                 <>
                   <h4 className="font-semibold text-gray-700 mt-4">Información del Vehículo:</h4>
@@ -449,13 +449,13 @@ function Register() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
               >
                 Atrás
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:bg-green-300"
                 disabled={loading}
               >
                 {loading ? 'Enviando...' : 'Registrarse'}
@@ -467,10 +467,10 @@ function Register() {
         return null;
     }
   };
- 
+
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      className="flex items-center justify-center min-h-screen bg-cover bg-center px-4"
       style={{
         backgroundImage: 'url(https://images2.alphacoders.com/546/thumb-1920-546678.jpg)',
       }}
@@ -497,5 +497,5 @@ function Register() {
     </div>
   );
 }
- 
+
 export default Register;
