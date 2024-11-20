@@ -1,4 +1,3 @@
-// src/components/Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; // Importar Link y useNavigate
@@ -91,8 +90,9 @@ function Register() {
       const { token } = response.data;
       localStorage.setItem('token', token);
       toast.success('Registro exitoso');
+      // Navegar al dashboard después de un pequeño delay
       setTimeout(() => {
-        navigate('/dashboard'); // Navega a /dashboard
+        navigate('dashboard'); // Navega a /MainDashboard
       }, 1500);
     } catch (error) {
       console.error('Error al registrarse:', error);
@@ -114,19 +114,18 @@ function Register() {
         // Paso 1: Seleccionar tipo de usuario con imágenes
         return (
           <div className="mb-6">
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
+            <h3 className="mb-4 text-xl font-semibold text-gray-800">
               Selecciona tu tipo de usuario
             </h3>
-            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <div className="flex justify-center space-x-6">
               <div
                 onClick={() => handleUserTypeSelect('passenger')}
-                className={`cursor-pointer p-4 border-2 rounded-lg flex-1 max-w-xs mx-auto sm:mx-0 ${
+                className={`cursor-pointer p-4 border-2 rounded-lg ${
                   formData.userType === 'passenger'
                     ? 'border-green-600'
                     : 'border-gray-300'
-                } hover:border-green-500 transition-colors duration-200`}
+                }`}
               >
-                {/* Usar el enlace directo de pasajero */}
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/1042/1042260.png"
                   alt="Pasajero"
@@ -138,15 +137,14 @@ function Register() {
               </div>
               <div
                 onClick={() => handleUserTypeSelect('driver')}
-                className={`cursor-pointer p-4 border-2 rounded-lg flex-1 max-w-xs mx-auto sm:mx-0 ${
+                className={`cursor-pointer p-4 border-2 rounded-lg ${
                   formData.userType === 'driver'
                     ? 'border-green-600'
                     : 'border-gray-300'
-                } hover:border-green-500 transition-colors duration-200`}
+                }`}
               >
-                {/* Usar un enlace directo de conductor */}
                 <img
-                  src="https://cdn-icons-png.flaticon.com/512/2481/2481723.png" // Enlace de ejemplo, reemplázalo con el correcto si lo tienes
+                  src="https://cdn-icons-png.flaticon.com/512/2481/2481723.png"
                   alt="Conductor"
                   className="w-24 h-24 mx-auto"
                 />
@@ -159,14 +157,14 @@ function Register() {
               <button
                 type="button"
                 onClick={() => navigate('/login')} // Navegar a /login
-                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Atrás
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:bg-green-300"
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
                 disabled={!formData.userType}
               >
                 Siguiente
@@ -178,7 +176,7 @@ function Register() {
         // Paso 2: Datos básicos
         return (
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
+            <h3 className="mb-4 text-xl font-semibold text-gray-800">
               Información Personal
             </h3>
             <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2">
@@ -287,14 +285,14 @@ function Register() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Atrás
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200"
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
               >
                 Siguiente
               </button>
@@ -306,7 +304,7 @@ function Register() {
         if (formData.userType === 'driver') {
           return (
             <div>
-              <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
+              <h3 className="mb-4 text-xl font-semibold text-gray-800">
                 Información del Vehículo
               </h3>
               <div className="mb-4">
@@ -397,14 +395,14 @@ function Register() {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+                  className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
                   Atrás
                 </button>
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200"
+                  className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
                 >
                   Siguiente
                 </button>
@@ -412,18 +410,16 @@ function Register() {
             </div>
           );
         } else {
-          // Si es pasajero, saltamos al paso final
-          nextStep();
+          nextStep(); // Saltar si no es conductor
           return null;
         }
       case 4:
         // Paso 4: Confirmación y envío
         return (
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-gray-800 text-center sm:text-left">
+            <h3 className="mb-4 text-xl font-semibold text-gray-800">
               Revisa tu información
             </h3>
-            {/* Resumen de la información ingresada */}
             <div className="mb-6">
               <h4 className="font-semibold text-gray-700">Tipo de Usuario:</h4>
               <p className="mb-4 capitalize">{formData.userType}</p>
@@ -449,13 +445,13 @@ function Register() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+                className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Atrás
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:bg-green-300"
+                className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
                 disabled={loading}
               >
                 {loading ? 'Enviando...' : 'Registrarse'}
@@ -470,7 +466,7 @@ function Register() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center px-4"
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
       style={{
         backgroundImage: 'url(https://images2.alphacoders.com/546/thumb-1920-546678.jpg)',
       }}
@@ -485,7 +481,6 @@ function Register() {
         <form onSubmit={handleSubmit}>
           {renderStep()}
         </form>
-        {/* Texto para iniciar sesión */}
         <p className="mt-6 text-center text-gray-600">
           ¿Ya tienes una cuenta?{' '}
           <Link to="/login" className="text-green-600 hover:underline">
